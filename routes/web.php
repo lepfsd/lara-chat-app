@@ -14,3 +14,7 @@
 Route::get('/{any}', function () {
     return view('layouts.master');
 })->where('any','.*');
+
+Route::post('/register', 'UserController@register')->middleware('guest');
+Route::post('/login', 'UserController@login')->middleware('guest');
+Route::post('/update/token', 'UserController@updateToken');
