@@ -118,6 +118,37 @@
                 } catch (error) {
                     console.log('Error Token', error);
                 }
+            },
+            async addUserToAGroup(uid) {
+                let url = `https://api-us.cometchat.io/v2.0/groups/${process.env.MIX_COMMETCHAT_GUID}/members`;
+                let data = {
+                    "participants": [uid]
+                };
+
+                try {
+                    const groupResponse = await fetch(url, {
+                        method: 'POST',
+                        headers: new Headers({
+                            appid: process.env.MIX_COMMETCHAT_APP_ID,
+                            apikey: process.env.MIX_COMMETCHAT_API_KEY,
+                            'Content-Type': 'application/json'
+                        }),
+                        body: JSON.stringify(data)
+                    });
+
+                    const gruoupJson = await groupResponse.json();
+                    console.log('added to group', gruoupJson);
+                } catch (error) {
+                    console.log('Error', error);
+                }
+            },
+            sendTokenToServer(token, uid){
+                axios.post(`http://localhost:8000/api/update/token`, {token, uid})
+                    .then(response => {
+                        console.log("token updated successfully", response);
+                    }). catch(error => {
+                        alert(error.response.data.message);
+                });
             }
         }
     };
