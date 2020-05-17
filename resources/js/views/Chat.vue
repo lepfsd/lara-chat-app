@@ -143,6 +143,49 @@
                     
                 );
             }
+        },
+        mounted() {
+            this.loadingMessage = true;
+            var listenerID = "UNIQUE_LISTENER_ID";
+            const messsageRequest = new CometChat.MessagesRequestBuilder()
+                .setLimit(100)
+                .build()
+            
+            messsageRequest.fetchPrevious().then(
+                messages => {
+                    console.log("Message list fetched:", messages);
+                    console.log("this.groupMessages", this.groupMessages);
+                    this.groupMessages = [
+                        ...this.groupMessages,
+                        ...messages
+                    ];
+                    this.loadingMessages = false;
+                    this.nextTick(() => {
+                        this.scrollToBottom();
+                    })
+                }, 
+                error => {
+                    console.log("Message fetching failed with error:", error);
+                }
+            );
+            CometChat.addMessageListener(
+                listenerID,
+                new CometChat.MessageListener({
+                    onTextMessageReceived: textMessage => {
+                        console.log("Text message received successfully", textMessage);
+                        // Handle text message
+                        console.log(this.groupMessages)
+                        this.groupMessages = [
+                            ...this.groupMessages,
+                            textMessage
+                        ];
+                        this.loadingMessages = false;
+                        this.nextTick(() => {
+                            this.scrollToBottom();
+                        })
+                    }
+                })
+            );
         }
     };
 </script>
